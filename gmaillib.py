@@ -17,6 +17,7 @@ import os
 class message:
     def __init__(self, fetched_email, *args, **kwargs):
         
+        fetched_email = fetched_email.decode()
         accepted_types = kwargs.get('types', ['text/plain'])
         parsed = email.message_from_string(fetched_email)
         self.parsed_email = email.message_from_string(fetched_email)
@@ -48,7 +49,7 @@ class message:
         if mail.get_content_maintype() != 'multipart':
             return "no attachment"
 
-        print "["+ mail["From"]+"] :" + mail["Subject"]
+        print("["+ mail["From"]+"] :" + mail["Subject"])
 
         for part in mail.walk():
             if part.get_content_maintype() == 'multipart':
@@ -131,7 +132,7 @@ class account:
 
         self.receiveserver.select("Inbox")
         fetch_str = self.receiveserver.uid('SEARCH', None, 'X-GM-RAW', search_string)[1][0]
-        fetch_list = fetch_str.split(' ')
+        fetch_list = fetch_str.split(b' ')
         emails = []
         for email_index in fetch_list:
             emails.append(self.get_email(email_index))
@@ -140,7 +141,7 @@ class account:
     def get_all_messages(self):
         self.receiveserver.select('Inbox')
         fetch_list = self.receiveserver.search(None, '(UNDELETED)')[1][0]
-        fetch_list = fetch_list.split(' ')
+        fetch_list = fetch_list.split(b' ')
         inbox_emails = []
         for each_email in fetch_list:
             inbox_emails.append(self.get_email(each_email))
@@ -149,8 +150,8 @@ class account:
     def unread(self):
         self.receiveserver.select('Inbox')
         fetch_list = self.receiveserver.search(None,'UnSeen')[1][0]
-        fetch_list = fetch_list.split(' ')
-        if fetch_list == ['']:
+        fetch_list = fetch_list.split(b' ')
+        if fetch_list == [b'']:
             return []
         unread_emails = []
         for each_email in fetch_list:
@@ -173,7 +174,7 @@ class account:
     def inbox(self, start=0, amount=10):
         self.receiveserver.select('Inbox')
         inbox_emails = []
-        messages_to_fetch = ','.join(self._get_uids()[start:start+amount])
+        messages_to_fetch = b','.join(self._get_uids()[start:start+amount])
         fetch_list = self.receiveserver.uid('fetch', messages_to_fetch,'(RFC822)')
         for each_email in fetch_list[1]:
             if(len(each_email) == 1):
@@ -187,6 +188,6 @@ class account:
     def _get_uids(self):
         self.receiveserver.select('Inbox')
         result, data = self.receiveserver.uid('search', None, 'ALL')
-        data = data[0].split(' ')
+        data = data[0].split(b' ')
         data.reverse()
         return data
