@@ -1,7 +1,7 @@
-Python module for GMail
+Python module for GMail (forked and updated to work in Python 3)
 ===
 
-Simple Python module to interact with Google's mail service GMail. The module
+Simple Python 3 module to interact with Google's mail service GMail. The module
 uses Python's included imaplib and smtplib for recieving and sending emails.
 
 The goal of this module is to provide a simple direct interface to GMail.
